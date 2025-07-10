@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>就活管理アプリ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #34495e;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e3f2fd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        
+        .form-control.textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .companies-section {
+            margin-top: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .company-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .company-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .status-未応募 {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-書類選考中 {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-面接中 {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .status-内定 {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        
+        .priority-high {
+            border-left-color: #e74c3c;
+        }
+        
+        .priority-medium {
+            border-left-color: #f39c12;
+        }
+        
+        .priority-low {
+            border-left-color: #95a5a6;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .back-button {
+            background: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .es-form-group {
+            margin-bottom: 25px;
+        }
+        
+        .character-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .data-management {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .data-management h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .data-management p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-card {
+                padding: 20px;
+            }
+            
+            .company-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-briefcase"></i> 就活管理アプリ</h1>
+            <p>あなたの就職活動を効率的に管理しましょう</p>
+        </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="/calendar" class="btn-secondary" style="text-decoration: none;">
+                <i class="fas fa-calendar-alt"></i> カレンダーを見る
+            </a>
+        </div>
+        
+        <!-- 企業登録フォーム -->
+        <div id="companySection" class="form-card">
+            <h3 class="form-title">
+                <i class="fas fa-plus-circle"></i>
+                新しい企業を追加
+            </h3>
+            <form id="companyForm">
+                <div class="form-group">
+                    <label class="form-label">企業名</label>
+                    <input type="text" id="companyName" class="form-control" placeholder="株式会社〇〇" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">業界</label>
+                    <input type="text" id="industry" class="form-control" placeholder="IT・情報通信">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">志望度</label>
+                    <select id="priority" class="form-control">
+                        <option value="高">高</option>
+                        <option value="中">中</option>
+                        <option value="低">低</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">応募締切</label>
+                    <input type="date" id="deadline" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">ステータス</label>
+                    <select id="status" class="form-control">
+                        <option value="未応募">未応募</option>
+                        <option value="書類選考中">書類選考中</option>
+                        <option value="面接中">面接中</option>
+                        <option value="内定">内定</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-plus"></i> 企業を追加
+                </button>
+            </form>
+        </div>
+        
+        <!-- 企業一覧 -->
+        <div id="companiesSection" class="companies-section">
+            <h3 class="section-title">
+                <i class="fas fa-building"></i>
+                登録企業一覧
+            </h3>
+            
+            <div id="companiesList">
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>まだ企業が登録されていません</p>
+                    <p>上のフォームから企業を追加してください</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- データ管理セクション -->
+        <div class="data-management">
+            <h3><i class="fas fa-database"></i> データ管理</h3>
+            <p>登録したデータはブラウザに自動保存されます</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-secondary" onclick="exportData()">
+                    <i class="fas fa-download"></i> データをエクスポート
+                </button>
+                <button class="btn-secondary" onclick="document.getElementById('importFile').click()">
+                    <i class="fas fa-upload"></i> データをインポート
+                </button>
+                <button class="btn-danger" onclick="clearAllData()">
+                    <i class="fas fa-trash"></i> 全データを削除
+                </button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+        </div>
+        
+        <!-- ES作成フォーム -->
+        <div id="esSection" class="form-card hidden">
+            <button class="back-button" onclick="showMainView()">
+                <i class="fas fa-arrow-left"></i> 企業一覧に戻る
+            </button>
+            
+            <h3 class="form-title">
+                <i class="fas fa-edit"></i>
+                エントリーシート作成
+            </h3>
+            
+            <div id="selectedCompanyInfo" class="company-card" style="margin-bottom: 30px;">
+                <!-- 選択された企業情報が表示される -->
+            </div>
+            
+            <form id="esForm">
+                <div class="es-form-group">
+                    <label class="form-label">志望動機（400文字以内）</label>
+                    <textarea id="motivation" class="form-control textarea" placeholder="なぜこの企業を志望するのか、具体的な理由を記入してください..." maxlength="400"></textarea>
+                    <div class="character-count">
+                        <span id="motivationCount">0</span> / 400文字
+                    </div>
+                </div>
+                
+                <div class="es-form-group">
+                    <label class="form-label">自己PR（300文字以内）</label>
+                    <textarea id="selfPR" class="form-control textarea" placeholder="あなたの強みや特徴をアピールしてください..." maxlength="300"></textarea>
+                    <div class="character-count">
+                        <span id="selfPRCount">0</span> / 300文字
+                    </div>
+                </div>
+                
+                <div class="es-form-group">
+                    <label class="form-label">学生時代に力を入れたこと（300文字以内）</label>
+                    <textarea id="studentLife" class="form-control textarea" placeholder="学生時代の経験や取り組みについて教えてください..." maxlength="300"></textarea>
+                    <div class="character-count">
+                        <span id="studentLifeCount">0</span> / 300文字
+                    </div>
+                </div>
+                
+                <div class="es-form-group">
+                    <label class="form-label">将来のキャリアプラン（200文字以内）</label>
+                    <textarea id="careerPlan" class="form-control textarea" placeholder="将来どのようなキャリアを築きたいか記入してください..." maxlength="200"></textarea>
+                    <div class="character-count">
+                        <span id="careerPlanCount">0</span> / 200文字
+                    </div>
+                </div>
+                
+                <div class="es-form-group">
+                    <label class="form-label">その他・備考</label>
+                    <textarea id="notes" class="form-control textarea" placeholder="その他アピールしたいことがあれば記入してください..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i> エントリーシートを保存
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let companies = [];
+        let selectedCompanyIndex = -1;
+        
+        // データ保存・読み込み関数
+        function saveData() {
+            const data = {
+                companies: companies,
+                timestamp: new Date().toISOString()
+            };
+            try {
+                // データを複数の場所に保存（冗長性確保）
+                const dataStr = JSON.stringify(data);
+                window.jobHuntingData = data;
+                
+                // Cookie に保存（サイズ制限があるため、小さなデータのみ）
+                if (dataStr.length < 4000) {
+                    document.cookie = `jobHuntingData=${encodeURIComponent(dataStr)}; expires=${new Date(Date.now() + 365*24*60*60*1000).toUTCString()}; path=/`;
+                }
+                
+                // データを分割して保存（大きなデータにも対応）
+                const chunks = [];
+                const chunkSize = 4000;
+                for (let i = 0; i < dataStr.length; i += chunkSize) {
+                    chunks.push(dataStr.slice(i, i + chunkSize));
+                }
+                
+                // 分割データをグローバル変数に保存
+                window.jobHuntingDataChunks = chunks;
+                
+                console.log('データが保存されました');
+            } catch (error) {
+                console.error('データ保存エラー:', error);
+            }
+        }
+        
+        function loadData() {
+            try {
+                // グローバル変数から読み込み
+                if (window.jobHuntingData) {
+                    companies = window.jobHuntingData.companies || [];
+                    console.log('メモリからデータを読み込みました');
+                    return true;
+                }
+                
+                // 分割データから復元
+                if (window.jobHuntingDataChunks) {
+                    const dataStr = window.jobHuntingDataChunks.join('');
+                    const data = JSON.parse(dataStr);
+                    companies = data.companies || [];
+                    console.log('分割データからデータを復元しました');
+                    return true;
+                }
+                
+                // Cookie から読み込み
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'jobHuntingData') {
+                        const data = JSON.parse(decodeURIComponent(value));
+                        companies = data.companies || [];
+                        console.log('Cookieからデータを読み込みました');
+                        return true;
+                    }
+                }
+                
+                console.log('保存されたデータが見つかりません');
+                return false;
+            } catch (error) {
+                console.error('データ読み込みエラー:', error);
+                return false;
+            }
+        }
+        
+        function exportData() {
+            const data = {
+                companies: companies,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `job_hunting_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('データをエクスポートしました');
+        }
+        
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.companies && Array.isArray(data.companies)) {
+                        companies = data.companies;
+                        saveData();
+                        renderCompanies();
+                        alert('データをインポートしました');
+                    } else {
+                        throw new Error('不正なデータ形式です');
+                    }
+                } catch (error) {
+                    alert('データの読み込みに失敗しました: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function clearAllData() {
+            if (confirm('すべてのデータを削除しますか？この操作は取り消せません。')) {
+                companies = [];
+                
+                // 保存されたデータを削除
+                delete window.jobHuntingData;
+                delete window.jobHuntingDataChunks;
+                document.cookie = 'jobHuntingData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+                
+                renderCompanies();
+                alert('すべてのデータを削除しました');
+            }
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ja-JP');
+        }
+        
+        function renderCompanies() {
+            const companiesList = document.getElementById('companiesList');
+            
+            if (companies.length === 0) {
+                companiesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>まだ企業が登録されていません</p>
+                        <p>上のフォームから企業を追加してください</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            companiesList.innerHTML = companies.map((company, index) => `
+                <div class="company-card priority-${company.priority === '高' ? 'high' : company.priority === '中' ? 'medium' : 'low'}">
+                    <div class="company-name">${company.name}</div>
+                    <div class="company-details">
+                        <div class="detail-item">
+                            <i class="fas fa-industry"></i>
+                            <span>${company.industry || '未設定'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-star"></i>
+                            <span>志望度: ${company.priority}</span>
+                        </div>
+                        ${company.deadline ? `
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>締切: ${formatDate(company.deadline)}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="status-badge status-${company.status}">${company.status}</div>
+                    <div class="card-actions">
+                        <button class="btn-success" onclick="createES(${index})">
+                            <i class="fas fa-edit"></i> ES作成
+                        </button>
+                        ${company.es ? `
+                            <button class="btn-secondary" onclick="viewES(${index})">
+                                <i class="fas fa-eye"></i> ES確認
+                            </button>
+                        ` : ''}
+                        <button class="btn-danger" onclick="deleteCompany(${index})">
+                            <i class="fas fa-trash"></i> 削除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function deleteCompany(index) {
+            if (confirm('この企業を削除しますか？')) {
+                companies.splice(index, 1);
+                saveData();
+                renderCompanies();
+            }
+        }
+        
+        function createES(companyIndex) {
+            selectedCompanyIndex = companyIndex;
+            const company = companies[companyIndex];
+            
+            // 選択された企業情報を表示
+            const selectedCompanyInfo = document.getElementById('selectedCompanyInfo');
+            selectedCompanyInfo.innerHTML = `
+                <div class="company-name">${company.name}</div>
+                <div class="company-details">
+                    <div class="detail-item">
+                        <i class="fas fa-industry"></i>
+                        <span>${company.industry || '未設定'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-star"></i>
+                        <span>志望度: ${company.priority}</span>
+                    </div>
+                    ${company.deadline ? `
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>締切: ${formatDate(company.deadline)}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="status-badge status-${company.status}">${company.status}</div>
+            `;
+            
+            // 既存のESデータがある場合は入力フィールドに設定
+            if (company.es) {
+                document.getElementById('motivation').value = company.es.motivation || '';
+                document.getElementById('selfPR').value = company.es.selfPR || '';
+                document.getElementById('studentLife').value = company.es.studentLife || '';
+                document.getElementById('careerPlan').value = company.es.careerPlan || '';
+                document.getElementById('notes').value = company.es.notes || '';
+                
+                // 文字数カウントを更新
+                updateCharacterCount('motivation');
+                updateCharacterCount('selfPR');
+                updateCharacterCount('studentLife');
+                updateCharacterCount('careerPlan');
+            }
+            
+            showESView();
+        }
+        
+        function viewES(companyIndex) {
+            createES(companyIndex);
+        }
+        
+        function showESView() {
+            document.getElementById('companySection').classList.add('hidden');
+            document.getElementById('companiesSection').classList.add('hidden');
+            document.getElementById('esSection').classList.remove('hidden');
+        }
+        
+        function showMainView() {
+            document.getElementById('companySection').classList.remove('hidden');
+            document.getElementById('companiesSection').classList.remove('hidden');
+            document.getElementById('esSection').classList.add('hidden');
+            
+            // フォームをリセット
+            document.getElementById('esForm').reset();
+            selectedCompanyIndex = -1;
+            
+            // 文字数カウントをリセット
+            document.getElementById('motivationCount').textContent = '0';
+            document.getElementById('selfPRCount').textContent = '0';
+            document.getElementById('studentLifeCount').textContent = '0';
+            document.getElementById('careerPlanCount').textContent = '0';
+        }
+        
+        function updateCharacterCount(fieldId) {
+            const field = document.getElementById(fieldId);
+            const counter = document.getElementById(fieldId + 'Count');
+            counter.textContent = field.value.length;
+        }
+        
+        // ページ離脱時のデータ自動保存
+        window.addEventListener('beforeunload', function() {
+            saveData();
+        });
+        
+        // 定期的な自動保存
+        setInterval(saveData, 30000); // 30秒ごとに自動保存
+        
+        // 文字数カウント機能
+        document.getElementById('motivation').addEventListener('input', function() {
+            updateCharacterCount('motivation');
+        });
+        
+        document.getElementById('selfPR').addEventListener('input', function() {
+            updateCharacterCount('selfPR');
+        });
+        
+        document.getElementById('studentLife').addEventListener('input', function() {
+            updateCharacterCount('studentLife');
+        });
+        
+        document.getElementById('careerPlan').addEventListener('input', function() {
+            updateCharacterCount('careerPlan');
+        });
+        
+        // 企業追加フォーム
+        document.getElementById('companyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const company = {
+                name: document.getElementById('companyName').value,
+                industry: document.getElementById('industry').value,
+                priority: document.getElementById('priority').value,
+                deadline: document.getElementById('deadline').value,
+                status: document.getElementById('status').value,
+                es: null,
+                id: Date.now() // ユニークなIDを追加
+            };
+            
+            companies.push(company);
+            saveData(); // データを保存
+            renderCompanies();
+            
+            // フォームをリセット
+            this.reset();
+            
+            // 成功アニメーション
+            const button = this.querySelector('.btn-primary');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> 追加完了！';
+            button.style.background = '#27ae60';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 1500);
+        });
+        
+        // ES保存フォーム
+        document.getElementById('esForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (selectedCompanyIndex === -1) return;
+            
+            const esData = {
+                motivation: document.getElementById('motivation').value,
+                selfPR: document.getElementById('selfPR').value,
+                studentLife: document.getElementById('studentLife').value,
+                careerPlan: document.getElementById('careerPlan').value,
+                notes: document.getElementById('notes').value,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            companies[selectedCompanyIndex].es = esData;
+            saveData(); // データを保存
+            
+            // 成功アニメーション
+            const button = this.querySelector('.btn-primary');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> 保存完了！';
+            button.style.background = '#27ae60';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 1500);
+            
+            // 企業一覧を更新
+            renderCompanies();
+        });
+        
+        // 初期化処理
+        document.addEventListener('DOMContentLoaded', function() {
+            // データを読み込み
+            loadData();
+            // 企業一覧を描画
+            renderCompanies();
+            
+            console.log('アプリケーションが初期化されました');
+        });
+        
+        // 初期描画（DOMContentLoadedイベントのフォールバック）
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                loadData();
+                renderCompanies();
+            });
+        } else {
+            loadData();
+            renderCompanies();
+        }
+    </script>
+</body>
+</html>
