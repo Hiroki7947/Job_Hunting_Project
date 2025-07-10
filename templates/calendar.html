@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブカレンダー</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        #calendarDays {
+        display: contents;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .home-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-weight: 600;
+    border-radius: 30px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+    .home-link:hover {
+        background: linear-gradient(135deg, #52599a, #6b46c1);
+        box-shadow: 0 6px 20px rgba(106, 118, 222, 0.8);
+        text-decoration: none;
+    }
+
+        .calendar-container {
+            padding: 30px;
+        }
+
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .current-month {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.today {
+            background: #e74c3c;
+        }
+
+        .action-btn.today:hover {
+            background: #c0392b;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background: #bdc3c7;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .calendar-day:hover {
+            background: #f8f9fa;
+            transform: scale(1.02);
+            z-index: 1;
+            border-color: #3498db;
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-color: #2196f3;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .calendar-day.other-month {
+            background: #ecf0f1;
+            color: #95a5a6;
+        }
+
+        .calendar-day.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #5a67d8;
+        }
+
+        .day-number {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .calendar-day.today .day-number {
+            color: #1976d2;
+        }
+
+        .calendar-day.selected .day-number {
+            color: white;
+        }
+
+        .calendar-day.other-month .day-number {
+            color: #95a5a6;
+        }
+
+        .events {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .event {
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .event:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .event.work {
+            background: #e74c3c;
+        }
+
+        .event.personal {
+            background: #27ae60;
+        }
+
+        .event.meeting {
+            background: #f39c12;
+        }
+
+        .event.holiday {
+            background: #9b59b6;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            float: right;
+            margin-top: -5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .event-list {
+            margin-top: 20px;
+        }
+
+        .event-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .event-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .event-item.work {
+            border-left-color: #e74c3c;
+        }
+
+        .event-item.personal {
+            border-left-color: #27ae60;
+        }
+
+        .event-item.meeting {
+            border-left-color: #f39c12;
+        }
+
+        .event-item.holiday {
+            border-left-color: #9b59b6;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .event-time {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .event-description {
+            font-size: 14px;
+            color: #34495e;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-container {
+                padding: 15px;
+            }
+
+            .calendar-controls {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .current-month {
+                font-size: 1.5em;
+                min-width: auto;
+            }
+
+            .calendar-day {
+                min-height: 80px;
+                padding: 5px;
+            }
+
+            .day-number {
+                font-size: 14px;
+            }
+
+            .event {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+
+            .sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 インタラクティブカレンダー</h1>
+            <p>予定を管理して、効率的な日々を送りましょう</p>
+            <a href="/" class="home-link">ホームへ戻る</a>
+
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-controls">
+                <div class="month-navigation">
+                    <button class="nav-btn" onclick="previousMonth()">← 前月</button>
+                    <div class="current-month" id="currentMonth"></div>
+                    <button class="nav-btn" onclick="nextMonth()">次月 →</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-btn today" onclick="goToToday()">今日</button>
+                    <button class="action-btn" onclick="openSidebar()">+ 予定追加</button>
+                    <button class="action-btn" onclick="showAllEvents()">全予定</button>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="calendar-header">日</div>
+                <div class="calendar-header">月</div>
+                <div class="calendar-header">火</div>
+                <div class="calendar-header">水</div>
+                <div class="calendar-header">木</div>
+                <div class="calendar-header">金</div>
+                <div class="calendar-header">土</div>
+                <div id="calendarDays"></div>
+            </div>
+            
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #3498db;"></div>
+                    <span>一般</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e74c3c;"></div>
+                    <span>仕事</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #27ae60;"></div>
+                    <span>個人</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f39c12;"></div>
+                    <span>会議</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9b59b6;"></div>
+                    <span>祝日</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="close-btn" onclick="closeSidebar()">×</button>
+            <h2 id="sidebarTitle">予定を追加</h2>
+        </div>
+        <div class="sidebar-content">
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">予定名</label>
+                    <input type="text" id="eventTitle" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDate">日付</label>
+                    <input type="date" id="eventDate" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventTime">時間</label>
+                    <input type="time" id="eventTime" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="eventCategory">カテゴリ</label>
+                    <select id="eventCategory" class="form-control">
+                        <option value="general">一般</option>
+                        <option value="work">仕事</option>
+                        <option value="personal">個人</option>
+                        <option value="meeting">会議</option>
+                        <option value="holiday">祝日</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescription">詳細</label>
+                    <textarea id="eventDescription" class="form-control" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="btn">予定を保存</button>
+                <button type="button" class="btn btn-danger" id="deleteBtn" onclick="deleteEvent()" style="display: none; margin-top: 10px;">削除</button>
+            </form>
+
+            <div class="event-list" id="eventList"></div>
+        </div>
+    </div>
+
+    <script>
+        // データストレージ
+        let events = [
+            { id: 1, title: '朝の会議', date: '2025-07-05', time: '09:00', category: 'meeting', description: 'チームミーティング' },
+            { id: 2, title: 'プレゼンテーション', date: '2025-07-07', time: '14:00', category: 'work', description: 'クライアントプレゼン' },
+            { id: 3, title: '友人との食事', date: '2025-07-10', time: '18:00', category: 'personal', description: '久しぶりの再会' },
+            { id: 4, title: 'プロジェクト締切', date: '2025-07-15', time: '17:00', category: 'work', description: '最終レビュー' },
+            { id: 5, title: '健康診断', date: '2025-07-20', time: '10:00', category: 'personal', description: '年次健康診断' }
+        ];
+
+        let currentDate = new Date();
+        let selectedDate = null;
+        let editingEventId = null;
+
+        // 月名の配列
+        const monthNames = [
+            '1月', '2月', '3月', '4月', '5月', '6月',
+            '7月', '8月', '9月', '10月', '11月', '12月'
+        ];
+
+        // カレンダー初期化
+        function initCalendar() {
+            updateCalendar();
+            updateEventList();
+        }
+
+        // カレンダー更新
+        function updateCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // 月タイトル更新
+            document.getElementById('currentMonth').textContent = `${year}年 ${monthNames[month]}`;
+            
+            // カレンダー日付生成
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+         
+
+            
+            const today = new Date();
+            
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.onclick = () => selectDate(date);
+                
+                // 他月の日付
+                if (date.getMonth() !== month) {
+                    dayElement.classList.add('other-month');
+                }
+                
+                // 今日の日付
+                if (date.toDateString() === today.toDateString()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // 選択された日付
+                if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+                    dayElement.classList.add('selected');
+                }
+                
+                // 日付番号
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'day-number';
+                dayNumber.textContent = date.getDate();
+                dayElement.appendChild(dayNumber);
+                
+                // その日の予定を表示
+                const dayEvents = events.filter(event => 
+                    event.date === date.toISOString().split('T')[0]
+                );
+                
+                if (dayEvents.length > 0) {
+                    const eventsContainer = document.createElement('div');
+                    eventsContainer.className = 'events';
+                    
+                    dayEvents.slice(0, 3).forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.className = `event ${event.category}`;
+                        eventElement.textContent = event.title;
+                        eventElement.onclick = (e) => {
+                            e.stopPropagation();
+                            editEvent(event.id);
+                        };
+                        eventsContainer.appendChild(eventElement);
+                    });
+                    
+                    if (dayEvents.length > 3) {
+                        const moreElement = document.createElement('div');
+                        moreElement.className = 'event';
+                        moreElement.textContent = `+${dayEvents.length - 3} more`;
+                        moreElement.onclick = (e) => {
+                            e.stopPropagation();
+                            selectDate(date);
+                            showDayEvents(date);
+                        };
+                        eventsContainer.appendChild(moreElement);
+                    }
+                    
+                    dayElement.appendChild(eventsContainer);
+                }
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        // 日付選択
+        function selectDate(date) {
+            selectedDate = date;
+            updateCalendar();
+            
+            // 選択された日付を予定フォームに設定
+            document.getElementById('eventDate').value = formatDateToLocalYMD(date);
+        }
+
+        // 前月
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            updateCalendar();
+        }
+
+        // 次月
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            updateCalendar();
+        }
+
+        // 今日に移動
+        function goToToday() {
+            currentDate = new Date();
+            selectedDate = new Date();
+            updateCalendar();
+        }
+
+        // サイドバー開く
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('sidebarTitle').textContent = '予定を追加';
+            document.getElementById('deleteBtn').style.display = 'none';
+            document.getElementById('eventForm').reset();
+            editingEventId = null;
+            
+            // 選択された日付があればフォームに設定
+            if (selectedDate) {
+                document.getElementById('eventDate').value = selectedDate.toISOString().split('T')[0];
+            }
+        }
+
+        // サイドバー閉じる
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        // 予定追加/編集
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const eventData = {
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                time: document.getElementById('eventTime').value,
+                category: document.getElementById('eventCategory').value,
+                description: document.getElementById('eventDescription').value
+            };
+            
+            if (editingEventId) {
+                // 編集
+                const eventIndex = events.findIndex(e => e.id === editingEventId);
+                events[eventIndex] = { ...events[eventIndex], ...eventData };
+            } else {
+                // 新規追加
+                eventData.id = Date.now();
+                events.push(eventData);
+            }
+            
+            updateCalendar();
+            updateEventList();
+            closeSidebar();
+        });
+
+        // 予定編集
+        function editEvent(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                editingEventId = eventId;
+                
+                document.getElementById('eventTitle').value = event.title;
+                document.getElementById('eventDate').value = event.date;
+                document.getElementById('eventTime').value = event.time || '';
+                document.getElementById('eventCategory').value = event.category;
+                document.getElementById('eventDescription').value = event.description || '';
+                
+                document.getElementById('sidebarTitle').textContent = '予定を編集';
+                document.getElementById('deleteBtn').style.display = 'block';
+                
+                openSidebar();
+            }
+        }
+
+        // 予定削除
+        function deleteEvent() {
+            if (editingEventId && confirm('この予定を削除してもよろしいですか？')) {
+                events = events.filter(e => e.id !== editingEventId);
+                updateCalendar();
+                updateEventList();
+                closeSidebar();
+            }
+        }
+
+        // 予定一覧更新
+        function updateEventList() {
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = '<h3>今後の予定</h3>';
+            
+            const today = new Date().toISOString().split('T')[0];
+            const upcomingEvents = events
+                .filter(event => event.date >= today)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 10);
+            
+            upcomingEvents.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item ${event.category}`;
+                eventItem.onclick = () => editEvent(event.id);
+                
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-time">${event.date} ${event.time || ''}</div>
+                    <div class="event-description">${event.description || ''}</div>
+                `;
+                
+                eventList.appendChild(eventItem);
+            });
+        }
+
+        // 特定日の予定表示
+        function showDayEvents(date) {
+            const dayEvents = events.filter(event => 
+                event.date === formatDateToLocalYMD(date)
+            );
+            
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = `<h3>${date.toLocaleDateString('ja-JP')}の予定</h3>`;
+            
+            dayEvents.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item ${event.category}`;
+                eventItem.onclick = () => editEvent(event.id);
+                
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-time">${event.time || '終日'}</div>
+                    <div class="event-description">${event.description || ''}</div>
+                `;
+                
+                eventList.appendChild(eventItem);
+            });
+            
+            openSidebar();
+        }
+
+        // 全予定表示
+        function showAllEvents() {
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = '<h3>全ての予定</h3>';
+            
+            const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            sortedEvents.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item ${event.category}`;
+                eventItem.onclick = () => editEvent(event.id);
+                
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-time">${event.date} ${event.time || ''}</div>
+                    <div class="event-description">${event.description || ''}</div>
+                `;
+                
+                eventList.appendChild(eventItem);
+            });
+            
+            openSidebar();
+        }
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', initCalendar);
+    </script>
+</body>
+</html>
