@@ -7,7 +7,7 @@ asgiref==3.8.1
 astunparse==1.6.3
 attrs==23.2.0
 blinker==1.9.0
-Bottleneck @ file:///C:/b/abs_f05kqh7yvj/croot/bottleneck_1707864273291/work
+
 certifi==2024.7.4
 cffi==1.17.1
 charset-normalizer==3.3.2
