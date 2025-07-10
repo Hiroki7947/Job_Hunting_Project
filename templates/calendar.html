@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>インタラクティブカレンダー</title>
+    <title>日々の日程管理</title>
     <style>
         * {
             margin: 0;
@@ -480,7 +480,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 インタラクティブカレンダー</h1>
+            <h1>📅 日々の日程管理</h1>
             <p>予定を管理して、効率的な日々を送りましょう</p>
             <a href="/" class="home-link">ホームへ戻る</a>
 
@@ -588,13 +588,37 @@
 
     <script>
         // データストレージ
-        let events = [
+        // 新しいコード（これに置き換え）：
+        let events = JSON.parse(localStorage.getItem('calendarEvents')) || [
             { id: 1, title: '朝の会議', date: '2025-07-05', time: '09:00', category: 'meeting', description: 'チームミーティング' },
             { id: 2, title: 'プレゼンテーション', date: '2025-07-07', time: '14:00', category: 'work', description: 'クライアントプレゼン' },
             { id: 3, title: '友人との食事', date: '2025-07-10', time: '18:00', category: 'personal', description: '久しぶりの再会' },
             { id: 4, title: 'プロジェクト締切', date: '2025-07-15', time: '17:00', category: 'work', description: '最終レビュー' },
             { id: 5, title: '健康診断', date: '2025-07-20', time: '10:00', category: 'personal', description: '年次健康診断' }
         ];
+
+        // データ保存用の関数を追加
+        function saveEvents() {
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+        }
+
+        // 予定の追加・編集・削除時にsaveEvents()を呼び出すように既存の関数を修正
+        const originalPush = events.push;
+        events.push = function(...args) {
+            const result = originalPush.apply(this, args);
+            saveEvents();
+            return result;
+        };
+
+        // 予定配列が変更されたときの自動保存
+        let eventsProxy = new Proxy(events, {
+            set: function(target, property, value) {
+                target[property] = value;
+                saveEvents();
+                return true;
+            }
+        });
+        events = eventsProxy;
 
         let currentDate = new Date();
         let selectedDate = null;
