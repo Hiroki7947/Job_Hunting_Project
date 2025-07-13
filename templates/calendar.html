@@ -590,7 +590,17 @@
         // データストレージ
         // 新しいコード（これに置き換え）：
         // データストレージ
-// 修正後のコード（デフォルト予定を削除）：
+
+        // バージョン管理でリセット
+        const DATA_VERSION = '1.0';
+        const currentVersion = localStorage.getItem('calendarVersion');
+        
+        if (currentVersion !== DATA_VERSION) {
+            localStorage.removeItem('calendarEvents');
+            localStorage.setItem('calendarVersion', DATA_VERSION);
+        }
+
+
         let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
 
         // データ保存用の関数を追加
