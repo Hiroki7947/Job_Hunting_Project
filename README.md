@@ -1,4 +1,4 @@
-# アプリケーション名と概要
+<img width="734" height="717" alt="image" src="https://github.com/user-attachments/assets/5562f368-e262-412e-94cd-4f5a15e7c4ad" /># アプリケーション名と概要
 
 **就活管理アプリ**を作成しました。
 就活では様々な企業に応募することが考えられます。  
