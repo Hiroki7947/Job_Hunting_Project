@@ -21,8 +21,14 @@
 ## 機能一覧（要件定義）
 
 - 機能1: 企業登録
+    1. 「企業名」、「業界」、「志望度」、「応募締切」、「ステータス」の設定
+    2. 「エクスポート」による登録した企業ダウンロード
+    3. 「インポート」による企業登録
+    4. 登録企業削除
 - 機能2: ES作成
+    1. 「志望動機」、「自己PR」、「学生時代に力を入れたこと」、「将来のキャリアプラン」、「その他」項目ごとのES作成
 - 機能3: カレンダー
+-   1. 　企業のイベント予定、生活予定の登録
 <img width="333" height="717" alt="スクリーンショット 2025-07-15 084840" src="https://github.com/user-attachments/assets/a616d671-6acc-4fdc-bf44-a07b2cb697b0" />
 <img width="333" height="717" alt="スクリーンショット 2025-07-15 084936" src="https://github.com/user-attachments/assets/1e86f6b1-a5d1-40e7-9a08-6b19a2d6575a" />
 <img width="333" height="717" alt="image" src="https://github.com/user-attachments/assets/5562f368-e262-412e-94cd-4f5a15e7c4ad" />
@@ -33,6 +39,7 @@
 
 - フロントエンド:  HTML + CSS + JS 
 - バックエンド:  Python (Flask)
+- データベース: SQlite
 - その他: Claude  Chat GPT
 
 ---
