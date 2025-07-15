@@ -22,16 +22,18 @@
 
 - 機能1: 企業登録
 - 機能2: ES作成
-- 機能3: カレンダー  
+- 機能3: カレンダー
+<img width="333" height="717" alt="スクリーンショット 2025-07-15 084840" src="https://github.com/user-attachments/assets/a616d671-6acc-4fdc-bf44-a07b2cb697b0" />
+<img width="333" height="717" alt="スクリーンショット 2025-07-15 084936" src="https://github.com/user-attachments/assets/1e86f6b1-a5d1-40e7-9a08-6b19a2d6575a" />
 <img width="333" height="717" alt="image" src="https://github.com/user-attachments/assets/5562f368-e262-412e-94cd-4f5a15e7c4ad" />
 
 ---
 
-## 使用技術（React Native, ChatGPT, etc.）
+## 使用技術
 
 - フロントエンド:  HTML + CSS + JS 
-- バックエンド:  Python (Flask) 
-- その他: Git / SQLite など
+- バックエンド:  Python (Flask)
+- その他: Claude  Chat GPT
 
 ---
 
@@ -51,6 +53,6 @@
 
 ## 開発者情報
 
-- 名前: 〇〇〇〇（GitHub: [@yourhandle](https://github.com/yourhandle)）
-- 所属: ○○大学○○学部（または会社名など）
-- お問い合わせ: yourmail@example.com
+- 名前: 髙橋 弘樹
+- 所属: 日本大学理工学部応用情報工学科
+  
