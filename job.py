@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'
 
 # データベース設定
 DATABASE = 'shukatsu.db'
@@ -130,61 +129,8 @@ def add_company():
     return jsonify({'message': '企業が正常に追加されました。'}), 200
 
 
-@app.route('/schedule/<int:company_id>')
-def schedule_form(company_id):
-    """予定作成フォーム"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    # 企業情報を取得
-    cursor.execute('SELECT * FROM companies WHERE id = ?', (company_id,))
-    company = cursor.fetchone()
-    
-    # その企業の予定一覧を取得
-    cursor.execute('''
-        SELECT * FROM schedules 
-        WHERE company_id = ? 
-        ORDER BY schedule_date DESC, start_time DESC
-    ''', (company_id,))
-    schedules = cursor.fetchall()
-    
-    conn.close()
-    
-    if not company:
-        flash('企業が見つかりません。', 'error')
-        return redirect('/')
-    
-    return render_template('schedule_form.html', 
-                         company=company,
-                         schedules=schedules,
-                         schedule_types=SCHEDULE_TYPES)
 
-@app.route('/add_schedule', methods=['POST'])
-def add_schedule():
-    """予定を追加"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        INSERT INTO schedules (company_id, title, description, schedule_date, 
-                              start_time, end_time, location, schedule_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (
-        request.form['company_id'],
-        request.form['title'],
-        request.form['description'],
-        request.form['schedule_date'],
-        request.form['start_time'] if request.form['start_time'] else None,
-        request.form['end_time'] if request.form['end_time'] else None,
-        request.form['location'],
-        request.form['schedule_type']
-    ))
-    
-    conn.commit()
-    conn.close()
-    
-    flash('予定が正常に追加されました。', 'success')
-    return redirect(f'/schedule/{request.form["company_id"]}')
+
 
 @app.route('/calendar')
 def calendar():
@@ -210,24 +156,6 @@ def calendar():
     return render_template('calendar.html', schedules=schedules, year=year, month=month)
 
 
-@app.route('/schedule_list')
-def schedule_list():
-    """予定一覧表示"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    # 全予定を取得
-    cursor.execute('''
-        SELECT s.*, c.name as company_name 
-        FROM schedules s 
-        JOIN companies c ON s.company_id = c.id 
-        ORDER BY s.schedule_date DESC, s.start_time DESC
-    ''')
-    schedules = cursor.fetchall()
-    
-    conn.close()
-    
-    return render_template('schedule_list.html', schedules=schedules)
 
 @app.route('/update_schedule_status', methods=['POST'])
 def update_schedule_status():
@@ -301,112 +229,6 @@ def save_es():
     flash('エントリーシートが正常に保存されました。', 'success')
     return redirect('/')
 
-@app.route('/generate_answer', methods=['POST'])
-def generate_answer():
-    """AI支援でES回答を生成"""
-    data = request.get_json()
-    company_id = data.get('company_id')
-    question_type = data.get('question_type')
-    user_profile = data.get('user_profile', '')
-    
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    # 企業情報を取得
-    cursor.execute('SELECT * FROM companies WHERE id = ?', (company_id,))
-    company = cursor.fetchone()
-    
-    conn.close()
-    
-    if not company:
-        return jsonify({'error': '企業が見つかりません'})
-    
-    # AI支援生成
-    generated_answer = generate_ai_answer(company[1], company, question_type, user_profile)
-    
-    return jsonify({'answer': generated_answer})
-
-def generate_ai_answer(company_name, company_info, question_type, user_profile):
-    """AI支援でES回答を生成（サンプル実装）"""
-    
-    templates = {
-        "志望動機": f"""私が{company_name}様を志望する理由は、{company_info[2] if len(company_info) > 2 else 'この業界'}において革新的な取り組みを続けておられる点に強く魅力を感じたためです。
-
-特に、[具体的な事業内容や取り組み]に関して、私自身の[経験・スキル]を活かして貢献できると考えております。
-
-{user_profile}
-
-これらの経験を通じて培った[具体的なスキル]を活かし、{company_name}様の[事業分野]においてお役に立てると確信しております。""",
-        
-        "自己PR": f"""私の強みは[具体的な強み]です。
-
-{user_profile}
-
-この経験から、[身につけたスキル・能力]を身につけることができました。
-
-{company_name}様でも、この強みを活かして[具体的な貢献方法]で貢献していきたいと考えております。""",
-        
-        "学生時代に力を入れたこと": f"""学生時代に最も力を入れて取り組んだことは[具体的な取り組み]です。
-
-{user_profile}
-
-この経験を通じて、[学んだこと・身につけたスキル]を学びました。
-
-{company_name}様でも、この経験で培った[具体的なスキル]を活かして、チームの成果向上に貢献したいと考えております。""",
-        
-        "入社後の目標": f"""入社後は、{company_info[2] if len(company_info) > 2 else 'この業界'}における[具体的な分野]に取り組みたいと考えております。
-
-短期目標として、[1-2年での目標]を設定し、中長期的には[3-5年での目標]を目指したいと思います。
-
-{user_profile}
-
-これらの経験を活かし、{company_name}様の事業成長に貢献できるよう努めてまいります。""",
-        
-        "挫折経験": f"""私の挫折経験は[具体的な挫折経験]です。
-
-{user_profile}
-
-この経験から、[学んだこと・成長したポイント]を学びました。
-
-現在では、この経験を通じて身につけた[具体的なスキル・マインドセット]を活かし、困難な状況でも前向きに取り組める人材になったと自負しております。"""
-    }
-    
-    return templates.get(question_type, "こちらの質問に対する回答を作成してください。")
-
-@app.route('/api/schedules')
-def api_schedules():
-    """API: 予定データを返す"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        SELECT s.*, c.name as company_name 
-        FROM schedules s 
-        JOIN companies c ON s.company_id = c.id 
-        ORDER BY s.schedule_date, s.start_time
-    ''')
-    schedules = cursor.fetchall()
-    
-    conn.close()
-    
-    # JSON用にデータを整形
-    schedule_list = []
-    for schedule in schedules:
-        schedule_list.append({
-            'id': schedule[0],
-            'company_id': schedule[1],
-            'title': schedule[2],
-            'description': schedule[3],
-            'schedule_date': schedule[4],
-            'start_time': schedule[5],
-            'end_time': schedule[6],
-            'location': schedule[7],
-            'schedule_type': schedule[8],
-            'status': schedule[9],
-            'company_name': schedule[11]
-        })
-    
-    return jsonify(schedule_list)
 
 if __name__ == '__main__':
     init_db()
