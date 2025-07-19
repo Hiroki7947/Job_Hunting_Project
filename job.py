@@ -129,9 +129,6 @@ def add_company():
     return jsonify({'message': '企業が正常に追加されました。'}), 200
 
 
-
-
-
 @app.route('/calendar')
 def calendar():
     year = request.args.get('year', datetime.now().year, type=int)
@@ -154,7 +151,6 @@ def calendar():
     conn.close()
     
     return render_template('calendar.html', schedules=schedules, year=year, month=month)
-
 
 
 @app.route('/update_schedule_status', methods=['POST'])
@@ -261,9 +257,7 @@ def time_filter(value):
 
 3. 基本的なHTMLテンプレートを作成:
    - templates/index.html (メインページ)
-   - templates/schedule_form.html (予定作成フォーム)
    - templates/calendar.html (カレンダー表示)
-   - templates/schedule_list.html (予定一覧)
    - templates/es_form.html (ES作成フォーム)
 
 4. アプリケーションを起動:
