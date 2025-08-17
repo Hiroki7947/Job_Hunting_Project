@@ -47,7 +47,7 @@
 ## デモ動画のYouTubeリンク
 
 以下のリンクよりデモ動画をご覧いただけます：  
-👉 [YouTubeで見る](https://youtu.be/EF6Br4Y5AN4)
+👉 [YouTubeで見る](https://www.youtube.com/watch?v=EF6Br4Y5AN4)
 
 ---
 
